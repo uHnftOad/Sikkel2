@@ -367,6 +367,9 @@ transᵗʸ-cancelˡ = transᵉ (transᵗʸ-congˡ symᵗʸ-invˡ) reflᵗʸ-unit
 --------------------------------------------------
 -- Substitution of types
 
+ty-subst-new-proof : (σ : Δ ⇒ Γ) {f : Hom x y} {δy : Δ ⟨ y ⟩} {δx : Δ ⟨ x ⟩} (eδ : Δ ⟪ f ⟫ δy ≡ δx) → Γ ⟪ f ⟫ func σ δy ≡ func σ δx
+ty-subst-new-proof σ eδ = trans (_⇒_.naturality σ) (cong (func σ) eδ)
+
 _[_] : Ty Γ → Δ ⇒ Γ → Ty Δ
 T [ σ ] ⟨ x , δ ⟩ = T ⟨ x , func σ δ ⟩
 _⟪_,_⟫_ (_[_] {Γ = Γ} T σ) f {δy}{δx} eγ-yx t = T ⟪ f , proof ⟫ t

@@ -48,10 +48,39 @@ record Modality (C D : BaseCategory) : Set₁ where
     -- morphism of groupoids from Ty (lock Γ) to Ty Γ.
     mod-cong : {Γ : Ctx D} {T S : Ty (lock Γ)} →
                T ≅ᵗʸ S → ⟨_∣_⟩ T ≅ᵗʸ ⟨_∣_⟩ S
+    
+    {-
+                            from reflᵗʸ
+      ⟨ μ ∣ T ⟩ -------------------------------→ ⟨ μ ∣ T ⟩
+                                ||
+      ⟨ μ ∣ T ⟩ -------------------------------→ ⟨ μ ∣ T ⟩
+                 from (mod-cong μ (reflᵗʸ {T = T}))
+    -}
     mod-cong-refl : {Γ : Ctx D} {T : Ty (lock Γ)} → mod-cong (reflᵗʸ {T = T}) ≅ᵉ reflᵗʸ
+    {-
+                 from (mod-cong μ (symᵗʸ e))
+      ⟨ μ ∣ S ⟩ ---------------------------→ ⟨ μ ∣ T ⟩
+                             ||
+      ⟨ μ ∣ S ⟩ ---------------------------→ ⟨ μ ∣ T ⟩
+                 from (symᵗʸ (mod-cong μ e))
+    -}
     mod-cong-sym : {Γ : Ctx D} {T S : Ty (lock Γ)} {e : T ≅ᵗʸ S} → mod-cong (symᵗʸ e) ≅ᵉ symᵗʸ (mod-cong e)
+    {-
+                          from (mod-cong μ (transᵗʸ e e'))
+      ⟨ μ ∣ R ⟩ ---------------------------------------------------→ ⟨ μ ∣ S ⟩
+                                       ||
+      ⟨ μ ∣ R ⟩ -------------------→ ⟨ μ ∣ T ⟩ --------------------→ ⟨ μ ∣ S ⟩
+                 from (mod-cong μ e)             from (mod-cong μ e')
+    -}
     mod-cong-trans : {Γ : Ctx D} {R T S : Ty (lock Γ)} {e : R ≅ᵗʸ T} {e' : T ≅ᵗʸ S} →
                      mod-cong (transᵗʸ e e') ≅ᵉ transᵗʸ (mod-cong e) (mod-cong e')
+    {-
+                 from (mod-cong μ e) 
+      ⟨ μ ∣ T ⟩ -------------------→ ⟨ μ ∣ S ⟩
+                         ||
+      ⟨ μ ∣ T ⟩ -------------------→ ⟨ μ ∣ S ⟩
+                 from (mod-cong μ e') 
+    -}
     mod-cong-cong : {Γ : Ctx D} {T S : Ty (lock Γ)} {e e' : T ≅ᵗʸ S} → e ≅ᵉ e' → mod-cong e ≅ᵉ mod-cong e'
 
     -- We can push substitutions under the modal type former but they
@@ -60,18 +89,58 @@ record Modality (C D : BaseCategory) : Set₁ where
     -- pseudofunctor Ty ∘ lock to Ty).
     mod-natural : {Γ Δ : Ctx D} (σ : Γ ⇒ Δ) {T : Ty (lock Δ)} →
                   (⟨_∣_⟩ T) [ σ ] ≅ᵗʸ ⟨_∣_⟩ (T [ lock-fmap σ ])
+    {-
+                                               from (mod-natural μ σ)                            
+                              ⟨ μ ∣ T ⟩ [ σ ] ----------------------→ ⟨ μ ∣ T [ lock-fmap σ ] ⟩ 
+                                      |                                            |
+      ty-subst-cong-ty σ (mod-cong e) |                                            | from (mod-cong μ (ty-subst-cong-ty (lock-fmap σ) e))
+                                      ↓                                            ↓ 
+                              ⟨ μ ∣ S ⟩ [ σ ] ----------------------→ ⟨ μ ∣ S [ lock-fmap σ ] ⟩ 
+                                      
+    -}
     mod-natural-ty-eq : {Γ Δ : Ctx D} (σ : Γ ⇒ Δ) {T S : Ty (lock Δ)} (e : T ≅ᵗʸ S) →
                         transᵗʸ (mod-natural σ {T = T}) (mod-cong (ty-subst-cong-ty (lock-fmap σ) e))
                           ≅ᵉ
                         transᵗʸ (ty-subst-cong-ty σ (mod-cong e)) (mod-natural σ)
+    {-
+                                             from (mod-natural μ (id-subst (Γ ,lock⟨ μ ⟩)))  
+      ⟨ μ ∣ T ⟩ [ id-subst (Γ ,lock⟨ μ ⟩) ] ----------------------------------------------→ ⟨ μ ∣ T [ lock-fmap (id-subst (Γ ,lock⟨ μ ⟩)) ] ⟩
+                       |                                                                                            |
+                       |             from (mod-cong (transᵗʸ (ty-subst-cong-subst lock-fmap-id T) (ty-subst-id T))) |
+                       |                                                                                            ↓                              
+                       ---------------------------------------------------------------------------------------→ ⟨ μ ∣ T ⟩ 
+                                                       from (ty-subst-id ⟨ μ ∣ T ⟩)
+    -}
     mod-natural-id : {Γ : Ctx D} {T : Ty (lock Γ)} →
                      transᵗʸ (mod-natural _) (mod-cong (transᵗʸ (ty-subst-cong-subst lock-fmap-id T) (ty-subst-id T)))
                        ≅ᵉ
                      ty-subst-id (⟨_∣_⟩ T)
+    {-
+                                         from (ty-subst-cong-ty σ (mod-natural μ τ))
+      ⟨ μ ∣ T ⟩ [ τ ] [ σ ] ----------------------------------------------------------------------------→ ⟨ μ ∣ T [ lock-fmap τ ] ⟩ [ σ ]
+                |                                                                                                     |
+                | from (ty-subst-comp ⟨ μ ∣ T ⟩ τ σ)                                          from (mod-natural μ σ) |
+                ↓                                                                                                     ↓
+      ⟨ μ ∣ T ⟩ [ τ ⊚ σ ]                                                                        ⟨ μ ∣ T [ lock-fmap τ ] [ lock-fmap σ ] ⟩
+                |                                                                                                     |
+                | from (mod-natural μ σ)                                        from (mod-cong (ty-subst-comp T _ _)) |       
+                ↓                                                                                                     ↓
+      ⟨ μ ∣ T [ lock-fmap (τ ⊚ σ) ] ⟩ -----------------------------------------------------------→ ⟨ μ ∣ T [ lock-fmap τ ⊚ lock-fmap σ ] ⟩
+                                       from (mod-cong μ (ty-subst-cong-subst (lock-fmap-⊚ τ σ) T))
+    -}
     mod-natural-⊚ : {Γ Δ Θ : Ctx D} (τ : Δ ⇒ Θ) (σ : Γ ⇒ Δ) {T : Ty (lock Θ)} →
                     transᵗʸ (ty-subst-cong-ty σ (mod-natural τ)) (transᵗʸ (mod-natural σ) (mod-cong (ty-subst-comp T _ _)))
                       ≅ᵉ
                     transᵗʸ (ty-subst-comp (⟨_∣_⟩ T) τ σ) (transᵗʸ (mod-natural (τ ⊚ σ)) (mod-cong (ty-subst-cong-subst (lock-fmap-⊚ τ σ) T)))
+    {-
+                                        from (ty-subst-cong-subst ε ⟨ μ ∣ T ⟩)
+      ⟨ μ ∣ T ⟩ [ σ ] -----------------------------------------------------------------------→ ⟨ μ ∣ T ⟩ [ τ ]
+                |                                                                                        |
+                | from (mod-natural μ σ)                                          from (mod-natural μ τ) |
+                ↓                                                                                        ↓  
+      ⟨ μ ∣ T [ lock-fmap σ ] ⟩ -----------------------------------------------------------→ ⟨ μ ∣ T [ lock-fmap τ ] ⟩
+                                 from (mod-cong μ (ty-subst-cong-subst (lock-fmap-⊚ σ τ) T))
+    -}
     mod-natural-subst-eq : {Γ Δ : Ctx D} {σ τ : Γ ⇒ Δ} {T : Ty (lock Δ)} (ε : σ ≅ˢ τ) →
                            transᵗʸ (ty-subst-cong-subst ε (⟨_∣_⟩ T)) (mod-natural τ)
                              ≅ᵉ
@@ -250,7 +319,64 @@ module _ (μ : Modality C D) {Γ : Ctx D} where
       mod-intro μ tt' ∎
     where open ≅ᵗᵐ-Reasoning
 
+-- Given a natural transformation T ↣ S in C, construct a natural transformation ⟨ μ | T ⟩ ↣ ⟨ μ | S ⟩ in D
+module _ (μ : Modality C D) {Γ : Ctx D}  where
+  module _ {T S : Ty (Γ ,lock⟨ μ ⟩)} (η : T ↣ S) where
+    helper₁ : Tm ((Γ ,, ⟨ μ ∣ T ⟩) ,lock⟨ μ ⟩) (T [ lock-fmap μ π ] ⇛ S [ lock-fmap μ π ])
+    helper₁ = ↣-to-⇛ (ty-subst-map (lock-fmap μ π) η)
 
+    helper₂ : Tm (Γ ,, ⟨ μ ∣ T ⟩) ⟨ μ ∣ S [ lock-fmap μ π ] ⟩
+    helper₂ = modality-map μ {Γ = Γ ,, ⟨ μ ∣ T ⟩} helper₁ (ι⁻¹[ mod-natural μ π ] ξ)
+
+    helper₃ : Tm (Γ ,, ⟨ μ ∣ T ⟩) (⟨ μ ∣ S ⟩ [ π ])
+    helper₃ = ι[ mod-natural μ π ] helper₂
+
+    helper₄ : Tm Γ (⟨ μ ∣ T ⟩ ⇛ ⟨ μ ∣ S ⟩)
+    helper₄ = lam ⟨ μ ∣ T ⟩ helper₃
+
+    mod-on-↣ : ⟨ μ ∣ T ⟩ ↣ ⟨ μ ∣ S ⟩
+    mod-on-↣ = ⇛-to-↣ helper₄
+
+  mod-on-↣-cong : {T S : Ty (Γ ,lock⟨ μ ⟩)} {η φ : T ↣ S} → η ≅ⁿ φ → mod-on-↣ η ≅ⁿ mod-on-↣ φ
+  mod-on-↣-cong {T} {η = η} {φ = φ} s₁=s₂ = ⇛-to-↣-cong step₄
+    where 
+      step₁ : helper₁ η ≅ᵗᵐ helper₁ φ
+      step₁ = ↣-to-⇛-cong (ty-subst-map-cong s₁=s₂)
+
+      step₂ : helper₂ η ≅ᵗᵐ helper₂ φ
+      step₂ = mod-intro-cong μ (app-cong step₁ reflᵗᵐ)
+
+      step₃ : helper₃ η ≅ᵗᵐ helper₃ φ
+      step₃ = ι-cong step₂
+
+      step₄ : helper₄ η ≅ᵗᵐ helper₄ φ
+      step₄ = lam-cong ⟨ μ ∣ T ⟩ step₃
+  
+  -- FIXME: 
+  postulate
+    mod-on-↣-comp : {R T S : Ty (Γ ,lock⟨ μ ⟩)} → (η : R ↣ T) → (φ : T ↣ S) → (mod-on-↣ φ ⊙ mod-on-↣ η) ≅ⁿ mod-on-↣ (φ ⊙ η)
+    -- mod-on-↣-comp {R} {T} {S} η φ = proof
+    --   where
+    --     open ≡-Reasoning
+    --     proof : ⇛-to-↣ (helper₄ φ) ⊙ ⇛-to-↣ (helper₄ η) ≅ⁿ ⇛-to-↣ (helper₄ (φ ⊙ η))
+    --     eq proof t = 
+    --       begin
+    --         func (⇛-to-↣ (helper₄ φ) ⊙ ⇛-to-↣ (helper₄ η)) t
+    --       ≡⟨⟩
+    --         lam ⟨ μ ∣ T ⟩ (helper₃ φ) €⟨ _ , _ ⟩ (lam ⟨ μ ∣ R ⟩ (helper₃ η) €⟨ _ , _ ⟩ t)
+    --       ≡⟨⟩
+    --         lam ⟨ μ ∣ T ⟩ (helper₃ φ) ⟨ _ , _ ⟩' $⟨ BaseCategory.hom-id D , ctx-id Γ ⟩ (lam ⟨ μ ∣ R ⟩ (helper₃ η) ⟨ _ , _ ⟩' $⟨ BaseCategory.hom-id D , ctx-id Γ ⟩ t)
+    --       -- ≡⟨⟩
+    --       --   helper₃ φ ⟨ _ , [ _ , helper₃ η ⟨ _ , [ _ , t ] ⟩' ] ⟩'
+    --       ≡⟨ {!   !} ⟩
+    --         func (⇛-to-↣ (helper₄ (φ ⊙ η))) t ∎
+        
+        -- proof = {!   !}
+    mod-on-↣-mod-cong-from : {T S : Ty (Γ ,lock⟨ μ ⟩)} → (T=S : T ≅ᵗʸ S) → mod-on-↣ (from T=S) ≅ⁿ from (mod-cong μ T=S)
+
+    mod-on-↣-mod-cong-to : {T S : Ty (Γ ,lock⟨ μ ⟩)} → (T=S : T ≅ᵗʸ S) → mod-on-↣ (to T=S) ≅ⁿ to (mod-cong μ T=S)
+  
+      
 --------------------------------------------------
 -- Constructing new modalities
 

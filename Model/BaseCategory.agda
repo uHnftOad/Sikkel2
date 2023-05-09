@@ -7,6 +7,8 @@ module Model.BaseCategory where
 open import Data.Nat using (ℕ; _≤_)
 open import Data.Nat.Properties using (≤-refl; ≤-trans; ≤-irrelevant)
 open import Data.Unit using (⊤; tt)
+open import Data.Product using (Σ; Σ-syntax; _×_; proj₁; proj₂) renaming (_,_ to [_,_])
+open import Level
 open import Relation.Binary.PropositionalEquality
 
 open import Model.Helpers
@@ -14,6 +16,7 @@ open import Model.Helpers
 -- We only support small base categories with object and morphism types in Set₀.
 -- This is sufficient for the current applications like guarded recursion.
 record BaseCategory : Set₁ where
+  no-eta-equality
   field
     Ob : Set
     Hom : Ob → Ob → Set
@@ -27,6 +30,12 @@ record BaseCategory : Set₁ where
             (h ∙ g) ∙ f ≡ h ∙ (g ∙ f)
     hom-idʳ : ∀ {x y} {f : Hom x y} → f ∙ hom-id ≡ f
     hom-idˡ : ∀ {x y} {f : Hom x y} → hom-id ∙ f ≡ f
+
+  hom-idⁱ : ∀ {x y} {f : Hom x y} → f ∙ hom-id ≡ hom-id ∙ f
+  hom-idⁱ = trans hom-idʳ (sym hom-idˡ)
+
+  hom-idᵒ : ∀ {x y} {f : Hom x y} → hom-id ∙ f ≡ f ∙ hom-id
+  hom-idᵒ = trans hom-idˡ (sym hom-idʳ)
 open BaseCategory
 
 category-composition : (C : BaseCategory) {x y z : Ob C} →
@@ -124,6 +133,29 @@ _∙_ (Type-groupoid X) y=z x=y = trans x=y y=z
 ∙assoc (Type-groupoid X) {f = x=y} = sym (trans-assoc x=y)
 hom-idʳ (Type-groupoid X) = refl
 hom-idˡ (Type-groupoid X) = trans-reflʳ _
+
+--------------------------------------------------
+-- Product of two categories
+
+-- Helper functions for proof construction
+Σ-≡,≡→≡ : {ℓ₁ ℓ₂ : Level} {A : Set ℓ₁} {B : A → Set ℓ₂} {a₁ a₂ : A} {b₁ : B a₁} {b₂ : B a₂} → 
+           Σ[ p ∈ (a₁ ≡ a₂) ] (subst B p b₁ ≡ b₂) → 
+           [ a₁ , b₁ ] ≡ [ a₂ , b₂ ]
+Σ-≡,≡→≡ [ refl , refl ] = refl
+
+×-≡,≡→≡ : {ℓ₁ ℓ₂ : Level} {A : Set ℓ₁} {B : Set ℓ₂} {a₁ a₂ : A} {b₁ b₂ : B} → 
+           (a₁ ≡ a₂ × b₁ ≡ b₂) → 
+           [ a₁ , b₁ ] ≡ [ a₂ , b₂ ]
+×-≡,≡→≡ [ refl , refl ] = refl
+
+_⊗_ : BaseCategory → BaseCategory → BaseCategory
+Ob (C ⊗ D) = (Ob C) × (Ob D)
+Hom (C ⊗ D) [ c₁ , d₁ ] [ c₂ , d₂ ] = (Hom C c₁ c₂) × (Hom D d₁ d₂)
+hom-id (C ⊗ D) = [ hom-id C , hom-id D ]
+(_∙_) (C ⊗ D) [ f₂ , g₂ ] [ f₁ , g₁ ] = [ (_∙_) C f₂ f₁ , (_∙_) D g₂ g₁ ]
+∙assoc (C ⊗ D) = ×-≡,≡→≡ [ ∙assoc C , ∙assoc D ]
+hom-idʳ (C ⊗ D) = ×-≡,≡→≡ [ hom-idʳ C , hom-idʳ D ]
+hom-idˡ (C ⊗ D) = ×-≡,≡→≡ [ hom-idˡ C , hom-idˡ D ]
 
 record Functor (C D : BaseCategory) : Set where
   open BaseCategory
