@@ -87,6 +87,18 @@ module ≅ᵗᵐ-Reasoning where
 --------------------------------------------------
 -- Reindexing maps (cf. Dybjer's internal type theory)
 
+-- From the released version of Sikkel
+convert-term : (T ↣ S) → Tm Γ T → Tm Γ S
+convert-term η t ⟨ x , γ ⟩' = func η (t ⟨ x , γ ⟩')
+naturality (convert-term {T = T}{S = S} η t) f eγ =
+  begin
+    S ⟪ f , eγ ⟫ func η (t ⟨ _ , _ ⟩')
+  ≡⟨ naturality η ⟩
+    func η (T ⟪ f , eγ ⟫ (t ⟨ _ , _ ⟩'))
+  ≡⟨ cong (func η) (naturality t f eγ) ⟩
+    func η (t ⟨ _ , _ ⟩') ∎
+  where open ≡-Reasoning
+
 -- The reindexing map ι can be implemented in terms of a similar
 -- operation for the more primitive transformation T ↣ S. However, the
 -- following version enables Agda to infer the type equality proofs
@@ -101,6 +113,9 @@ naturality (ι[_]_ {T = T} {S = S} T=S s) f eγ =
   ≡⟨ cong (func (to T=S)) (naturality s f eγ) ⟩
     func (to T=S) (s ⟨ _ , _ ⟩') ∎
   where open ≡-Reasoning
+
+ι-convert-term : {T=S : T ≅ᵗʸ S} {t : Tm Γ S} → ι[ T=S ] t ≅ᵗᵐ convert-term (to T=S) t
+eq ι-convert-term γ = refl
 
 ι-cong : {T=S : T ≅ᵗʸ S} →
          s ≅ᵗᵐ s' → ι[ T=S ] s ≅ᵗᵐ ι[ T=S ] s'

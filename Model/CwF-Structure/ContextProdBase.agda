@@ -22,7 +22,7 @@ private
     Δ Γ Θ : Ctx C×D
 
 infix 30 _⟨_⟩ˡ _⟨_⟩ʳ
-infix 30 _ˢ⟪_⟫ˡ _ˢ⟪_⟫ʳ
+infix 30 _⟪_⟫ˡ _⟪_⟫ʳ
 infix 30 _ˢ⟨_⟩ˡ _ˢ⟨_⟩ʳ
 
 --------------------------------------------------
@@ -67,38 +67,38 @@ naturality (const-substʳ Γ g) {f = f} {δ = δ} =
          (ctx-comp Γ))
 
 -- Alternative syntax for `const-substˡ` and `const-substʳ`
-_ˢ⟪_⟫ˡ : (Γ : Ctx C×D) → (Hom C c₁ c₂) → Γ ⟨ c₂ ⟩ˡ ⇒ Γ ⟨ c₁ ⟩ˡ
-Γ ˢ⟪ f ⟫ˡ = const-substˡ Γ f
+_⟪_⟫ˡ : (Γ : Ctx C×D) → (Hom C c₁ c₂) → Γ ⟨ c₂ ⟩ˡ ⇒ Γ ⟨ c₁ ⟩ˡ
+Γ ⟪ f ⟫ˡ = const-substˡ Γ f
 
-_ˢ⟪_⟫ʳ : (Γ : Ctx C×D) → (Hom D d₁ d₂) → Γ ⟨ d₂ ⟩ʳ ⇒ Γ ⟨ d₁ ⟩ʳ
-Γ ˢ⟪ g ⟫ʳ = const-substʳ Γ g
+_⟪_⟫ʳ : (Γ : Ctx C×D) → (Hom D d₁ d₂) → Γ ⟨ d₂ ⟩ʳ ⇒ Γ ⟨ d₁ ⟩ʳ
+Γ ⟪ g ⟫ʳ = const-substʳ Γ g
 
--- `_ˢ⟪_⟫ˡ` respects the identity substitution
-≅ˢ-id-const-substˡ : {Γ : Ctx C×D} → Γ ˢ⟪ hom-id C ⟫ˡ ≅ˢ id-subst (Γ ⟨ c ⟩ˡ)
+-- `_⟪_⟫ˡ` respects the identity substitution
+≅ˢ-id-const-substˡ : {Γ : Ctx C×D} → Γ ⟪ hom-id C ⟫ˡ ≅ˢ id-subst (Γ ⟨ c ⟩ˡ)
 eq (≅ˢ-id-const-substˡ {Γ = Γ}) γ = ctx-id Γ
 
--- `_ˢ⟪_⟫ʳ` respects the identity substitution
-≅ˢ-id-const-substʳ : {Γ : Ctx C×D} → Γ ˢ⟪ hom-id D ⟫ʳ ≅ˢ id-subst (Γ ⟨ d ⟩ʳ)
+-- `_⟪_⟫ʳ` respects the identity substitution
+≅ˢ-id-const-substʳ : {Γ : Ctx C×D} → Γ ⟪ hom-id D ⟫ʳ ≅ˢ id-subst (Γ ⟨ d ⟩ʳ)
 eq (≅ˢ-id-const-substʳ {Γ = Γ}) γ = ctx-id Γ
 
--- `_ˢ⟪_⟫ˡ` respects euqalities of morphisms in C
-≅ˢ-cong-const-substˡ : {Γ : Ctx C×D} {f₁ f₂ : Hom C c₁ c₂} → f₁ ≡ f₂ → Γ ˢ⟪ f₁ ⟫ˡ ≅ˢ Γ ˢ⟪ f₂ ⟫ˡ
+-- `_⟪_⟫ˡ` respects euqalities of morphisms in C
+≅ˢ-cong-const-substˡ : {Γ : Ctx C×D} {f₁ f₂ : Hom C c₁ c₂} → f₁ ≡ f₂ → Γ ⟪ f₁ ⟫ˡ ≅ˢ Γ ⟪ f₂ ⟫ˡ
 eq (≅ˢ-cong-const-substˡ {Γ = Γ} e-hom) γ = cong (Γ ⟪_⟫ γ) (×-≡,≡→≡ [ e-hom , refl ])
 
--- `_ˢ⟪_⟫ʳ` respects euqalities of morphisms in D
-≅ˢ-cong-const-substʳ : {Γ : Ctx C×D} {g₁ g₂ : Hom D d₁ d₂} → g₁ ≡ g₂ → Γ ˢ⟪ g₁ ⟫ʳ ≅ˢ Γ ˢ⟪ g₂ ⟫ʳ
+-- `_⟪_⟫ʳ` respects euqalities of morphisms in D
+≅ˢ-cong-const-substʳ : {Γ : Ctx C×D} {g₁ g₂ : Hom D d₁ d₂} → g₁ ≡ g₂ → Γ ⟪ g₁ ⟫ʳ ≅ˢ Γ ⟪ g₂ ⟫ʳ
 eq (≅ˢ-cong-const-substʳ {Γ = Γ} e-hom) γ = cong (Γ ⟪_⟫ γ) (×-≡,≡→≡ [ refl , e-hom ])
 
--- `_ˢ⟪_⟫ˡ` respects composition of substitutions
+-- `_⟪_⟫ˡ` respects composition of substitutions
 ⊚-comp-const-substˡ : {Γ : Ctx C×D} → (f₁ : Hom C c₁ c₂) → (f₂ : Hom C c₂ c₃) → 
-                       Γ ˢ⟪ f₂ ∙[ C ] f₁ ⟫ˡ ≅ˢ Γ ˢ⟪ f₁ ⟫ˡ ⊚ Γ ˢ⟪ f₂ ⟫ˡ
+                       Γ ⟪ f₂ ∙[ C ] f₁ ⟫ˡ ≅ˢ Γ ⟪ f₁ ⟫ˡ ⊚ Γ ⟪ f₂ ⟫ˡ
 eq (⊚-comp-const-substˡ {Γ = Γ} f₁ f₂) γ = trans (cong (Γ ⟪_⟫ γ) (×-≡,≡→≡ [ refl , sym (hom-idˡ D) ])) (ctx-comp Γ)
-  -- RHS: func (Γ ˢ⟪ f₂ ∙[ C ] f₁ ⟫ˡ) {d} γ ≡ func (Γ ˢ⟪ f₁ ⟫ˡ) (func (Γ ˢ⟪ f₂ ⟫ˡ) γ)
+  -- RHS: func (Γ ⟪ f₂ ∙[ C ] f₁ ⟫ˡ) {d} γ ≡ func (Γ ⟪ f₁ ⟫ˡ) (func (Γ ⟪ f₂ ⟫ˡ) γ)
   -- Γ ⟪ [ f₂ ∙[ C ] f₁ , hom-id D {d} ] ⟫ γ ≡ Γ ⟪ [ f₁ , hom-id D {d} ] ⟫ (Γ ⟪ [ f₂ , hom-id D {d} ] ⟫ γ)
 
--- `_ˢ⟪_⟫ʳ` respects composition of substitutions
+-- `_⟪_⟫ʳ` respects composition of substitutions
 ⊚-comp-const-substʳ : {Γ : Ctx C×D} → (g₁ : Hom D d₁ d₂) → (g₂ : Hom D d₂ d₃) → 
-  Γ ˢ⟪ g₂ ∙[ D ] g₁ ⟫ʳ ≅ˢ Γ ˢ⟪ g₁ ⟫ʳ ⊚ Γ ˢ⟪ g₂ ⟫ʳ
+  Γ ⟪ g₂ ∙[ D ] g₁ ⟫ʳ ≅ˢ Γ ⟪ g₁ ⟫ʳ ⊚ Γ ⟪ g₂ ⟫ʳ
 eq (⊚-comp-const-substʳ {Γ = Γ} g₁ g₂) γ = trans (cong (Γ ⟪_⟫ γ) (×-≡,≡→≡ [ sym (hom-idˡ C) , refl ])) (ctx-comp Γ)
 
 -- Restrict a substitution in C×D to a substitution in D
@@ -118,41 +118,41 @@ _ˢ⟨_⟩ˡ : {Δ Γ : Ctx C×D} → (σ : Δ ⇒ Γ) → (c : Ob C) → Δ ⟨
 _ˢ⟨_⟩ʳ : {Δ Γ : Ctx C×D} → (σ : Δ ⇒ Γ) → (d : Ob D) → Δ ⟨ d ⟩ʳ ⇒ Γ ⟨ d ⟩ʳ
 σ ˢ⟨ d ⟩ʳ = fix-substʳ σ d
 
--- `_ˢ⟨_⟩ˡ` and `_ˢ⟪_⟫ˡ` commute.
-fix-const-substˡ : {Δ Γ : Ctx C×D} {σ : Δ ⇒ Γ} {f : Hom C c₁ c₂} → 
-                   (Γ ˢ⟪ f ⟫ˡ) ⊚ (σ ˢ⟨ c₂ ⟩ˡ) ≅ˢ (σ ˢ⟨ c₁ ⟩ˡ) ⊚ (Δ ˢ⟪ f ⟫ˡ)
-eq (fix-const-substˡ {σ = σ}) γ = naturality σ
+-- `_ˢ⟨_⟩ˡ` and `_⟪_⟫ˡ` commute.
+fix-const-substˡ : {Δ Γ : Ctx C×D} (σ : Δ ⇒ Γ) {f : Hom C c₁ c₂} → 
+                   (Γ ⟪ f ⟫ˡ) ⊚ (σ ˢ⟨ c₂ ⟩ˡ) ≅ˢ (σ ˢ⟨ c₁ ⟩ˡ) ⊚ (Δ ⟪ f ⟫ˡ)
+eq (fix-const-substˡ σ) γ = naturality σ
 
--- `_ˢ⟨_⟩ʳ` and `_ˢ⟪_⟫ʳ` commute.
-fix-const-substʳ : {Δ Γ : Ctx C×D} {σ : Δ ⇒ Γ} {g : Hom D d₁ d₂} → 
-                   (Γ ˢ⟪ g ⟫ʳ) ⊚ (σ ˢ⟨ d₂ ⟩ʳ) ≅ˢ (σ ˢ⟨ d₁ ⟩ʳ) ⊚ (Δ ˢ⟪ g ⟫ʳ)
-eq (fix-const-substʳ {σ = σ}) γ = naturality σ
+-- `_ˢ⟨_⟩ʳ` and `_⟪_⟫ʳ` commute.
+fix-const-substʳ : {Δ Γ : Ctx C×D} (σ : Δ ⇒ Γ) {g : Hom D d₁ d₂} → 
+                   (Γ ⟪ g ⟫ʳ) ⊚ (σ ˢ⟨ d₂ ⟩ʳ) ≅ˢ (σ ˢ⟨ d₁ ⟩ʳ) ⊚ (Δ ⟪ g ⟫ʳ)
+eq (fix-const-substʳ σ) γ = naturality σ
 
 -- `_ˢ⟨_⟩ˡ` respects equivalence of substitutions.
-fix-substˡ-cong : {Δ Γ : Ctx C×D} {σ τ : Δ ⇒ Γ} {c : Ob C} → σ ≅ˢ τ → σ ˢ⟨ c ⟩ˡ ≅ˢ τ ˢ⟨ c ⟩ˡ
-eq (fix-substˡ-cong σ=τ) = eq σ=τ
+fix-subst-congˡ : {Δ Γ : Ctx C×D} {σ τ : Δ ⇒ Γ} {c : Ob C} → σ ≅ˢ τ → σ ˢ⟨ c ⟩ˡ ≅ˢ τ ˢ⟨ c ⟩ˡ
+eq (fix-subst-congˡ σ=τ) = eq σ=τ
 
 -- `_ˢ⟨_⟩ʳ` respects equivalence of substitutions.
-fix-substʳ-cong : {Δ Γ : Ctx C×D} {σ τ : Δ ⇒ Γ} {d : Ob D} → σ ≅ˢ τ → σ ˢ⟨ d ⟩ʳ ≅ˢ τ ˢ⟨ d ⟩ʳ
-eq (fix-substʳ-cong σ=τ) = eq σ=τ
+fix-subst-congʳ : {Δ Γ : Ctx C×D} {σ τ : Δ ⇒ Γ} {d : Ob D} → σ ≅ˢ τ → σ ˢ⟨ d ⟩ʳ ≅ˢ τ ˢ⟨ d ⟩ʳ
+eq (fix-subst-congʳ σ=τ) = eq σ=τ
 
 -- `_ˢ⟨_⟩ˡ` preserves identity subsitutions.
-fix-substˡ-id : {Γ : Ctx C×D} → (id-subst Γ) ˢ⟨ c ⟩ˡ ≅ˢ id-subst (Γ ⟨ c ⟩ˡ)
-eq fix-substˡ-id γ = refl
+fix-subst-idˡ : {Γ : Ctx C×D} → (id-subst Γ) ˢ⟨ c ⟩ˡ ≅ˢ id-subst (Γ ⟨ c ⟩ˡ)
+eq fix-subst-idˡ γ = refl
 
 -- `_ˢ⟨_⟩ʳ` preserves identity subsitutions.
-fix-substʳ-id : {Γ : Ctx C×D} → (id-subst Γ) ˢ⟨ d ⟩ʳ ≅ˢ id-subst (Γ ⟨ d ⟩ʳ)
-eq fix-substʳ-id γ = refl
+fix-subst-idʳ : {Γ : Ctx C×D} → (id-subst Γ) ˢ⟨ d ⟩ʳ ≅ˢ id-subst (Γ ⟨ d ⟩ʳ)
+eq fix-subst-idʳ γ = refl
 
 -- `_ˢ⟨_⟩ˡ` commutes with composition of substitutions.
-fix-substˡ-⊚ : {Δ Γ Θ : Ctx C×D} {c : Ob C} → (τ : Γ ⇒ Θ) (σ : Δ ⇒ Γ) → 
+fix-subst-⊚ˡ : {Δ Γ Θ : Ctx C×D} {c : Ob C} → (τ : Γ ⇒ Θ) (σ : Δ ⇒ Γ) → 
                (τ ⊚ σ) ˢ⟨ c ⟩ˡ ≅ˢ (τ ˢ⟨ c ⟩ˡ) ⊚ (σ ˢ⟨ c ⟩ˡ)
-eq (fix-substˡ-⊚ τ σ) γ = refl
+eq (fix-subst-⊚ˡ τ σ) γ = refl
 
 -- `_ˢ⟨_⟩ʳ` commutes with composition of substitutions.
-fix-substʳ-⊚ : {Δ Γ Θ : Ctx C×D} {d : Ob D} → (τ : Γ ⇒ Θ) (σ : Δ ⇒ Γ) → 
+fix-subst-⊚ʳ : {Δ Γ Θ : Ctx C×D} {d : Ob D} → (τ : Γ ⇒ Θ) (σ : Δ ⇒ Γ) → 
                (τ ⊚ σ) ˢ⟨ d ⟩ʳ ≅ˢ (τ ˢ⟨ d ⟩ʳ) ⊚ (σ ˢ⟨ d ⟩ʳ)
-eq (fix-substʳ-⊚ τ σ) γ = refl
+eq (fix-subst-⊚ʳ τ σ) γ = refl
 
 eγ-decompnˡ : (Γ : Ctx C×D) → {f : Hom C c₁ c₂} {g : Hom D d₁ d₂} →
               {γ₁ : Γ ⟨ [ c₁ , d₁ ] ⟩} {γ₂ : Γ ⟨ [ c₂ , d₂ ] ⟩} → 

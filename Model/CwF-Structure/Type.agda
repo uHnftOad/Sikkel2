@@ -133,6 +133,15 @@ record _↣_ {Γ : Ctx C} (T : Ty Γ) (S : Ty Γ) : Set where
   no-eta-equality
   field
     func : ∀ {x} {γ} → T ⟨ x , γ ⟩ → S ⟨ x , γ ⟩
+    {-
+                        T ⟪ f , eγ ⟫_
+      T ⟨ x , γx ⟩ ←--------------------- T ⟨ y , γy ⟩ ∋ t
+            |                                    |
+            | func (T ↣ S)          func (T ↣ S) |
+            ↓                                    ↓
+      S ⟨ x , γx ⟩ ←--------------------- S ⟨ y , γy ⟩
+                        S ⟪ f , eγ ⟫_                         
+    -}
     naturality : ∀ {x y} {f : Hom x y} {γy : Γ ⟨ y ⟩} {γx : Γ ⟨ x ⟩} {eγ : Γ ⟪ f ⟫ γy ≡ γx} {t : T ⟨ y , γy ⟩} →
                  S ⟪ f , eγ ⟫ (func t) ≡ func (T ⟪ f , eγ ⟫ t)
 open _↣_ public
@@ -171,7 +180,7 @@ module ≅ⁿ-Reasoning where
   _∎ : ∀ (η : T ↣ S) → η ≅ⁿ η
   _∎ _ = reflⁿ
 
-  syntax step-≅  η φ≅µ η≅φ = η ≅⟨  η≅φ ⟩ φ≅µ
+  syntax step-≅  η φ≅µ η≅φ = η ≅⟨ η≅φ ⟩ φ≅µ
   syntax step-≅˘ η φ≅µ φ≅η = η ≅˘⟨ φ≅η ⟩ φ≅µ
 
 id-trans : (T : Ty Γ) → T ↣ T
@@ -367,7 +376,8 @@ transᵗʸ-cancelˡ = transᵉ (transᵗʸ-congˡ symᵗʸ-invˡ) reflᵗʸ-unit
 --------------------------------------------------
 -- Substitution of types
 
-ty-subst-new-proof : (σ : Δ ⇒ Γ) {f : Hom x y} {δy : Δ ⟨ y ⟩} {δx : Δ ⟨ x ⟩} (eδ : Δ ⟪ f ⟫ δy ≡ δx) → Γ ⟪ f ⟫ func σ δy ≡ func σ δx
+ty-subst-new-proof : (σ : Δ ⇒ Γ) {f : Hom x y} {δy : Δ ⟨ y ⟩} {δx : Δ ⟨ x ⟩} (eδ : Δ ⟪ f ⟫ δy ≡ δx) → 
+                      Γ ⟪ f ⟫ func σ δy ≡ func σ δx
 ty-subst-new-proof σ eδ = trans (_⇒_.naturality σ) (cong (func σ) eδ)
 
 _[_] : Ty Γ → Δ ⇒ Γ → Ty Δ
