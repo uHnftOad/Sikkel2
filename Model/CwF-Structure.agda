@@ -9,7 +9,6 @@ open import Model.CwF-Structure.ContextExtension public
 open import Model.CwF-Structure.ClosedType public
 open import Model.CwF-Structure.ContextFunctor public
 
--- new files
-open import Model.CwF-Structure.ContextProdBase public
-open import Model.CwF-Structure.TypeProdBase public
--- open import Model.CwF-Structure.TermProdBase public
+open import Model.CwF-Structure.OverProductBaseCategories.Context public
+open import Model.CwF-Structure.OverProductBaseCategories.Type public
+open import Model.CwF-Structure.OverProductBaseCategories.Term public

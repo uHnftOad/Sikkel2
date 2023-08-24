@@ -4,7 +4,7 @@
 
 open import Model.BaseCategory
 
-module Model.CwF-Structure.ContextProdBase {C D : BaseCategory} where
+module Model.CwF-Structure.OverProductBaseCategories.Context {C D : BaseCategory} where
 
 open import Relation.Binary.PropositionalEquality hiding ([_]; naturality)
 open import Data.Product renaming (_,_ to [_,_])
@@ -21,9 +21,9 @@ private
     d d₁ d₂ d₃ : Ob D
     Δ Γ Θ : Ctx C×D
 
-infix 30 _⟨_⟩ˡ _⟨_⟩ʳ
-infix 30 _⟪_⟫ˡ _⟪_⟫ʳ
-infix 30 _ˢ⟨_⟩ˡ _ˢ⟨_⟩ʳ
+infixl 30 _⟨_⟩ˡ _⟨_⟩ʳ
+infixl 30 _⟪_⟫ˡ _⟪_⟫ʳ
+infixl 30 _ˢ⟨_⟩ˡ _ˢ⟨_⟩ʳ
 
 --------------------------------------------------
 -- Functions related to contexts over a product base category C ⊗ D
@@ -73,7 +73,7 @@ _⟪_⟫ˡ : (Γ : Ctx C×D) → (Hom C c₁ c₂) → Γ ⟨ c₂ ⟩ˡ ⇒ Γ 
 _⟪_⟫ʳ : (Γ : Ctx C×D) → (Hom D d₁ d₂) → Γ ⟨ d₂ ⟩ʳ ⇒ Γ ⟨ d₁ ⟩ʳ
 Γ ⟪ g ⟫ʳ = const-substʳ Γ g
 
--- `_⟪_⟫ˡ` respects the identity substitution
+-- `_⟪_⟫ˡ` maps identity morphisms to identity substitutions
 ≅ˢ-id-const-substˡ : {Γ : Ctx C×D} → Γ ⟪ hom-id C ⟫ˡ ≅ˢ id-subst (Γ ⟨ c ⟩ˡ)
 eq (≅ˢ-id-const-substˡ {Γ = Γ}) γ = ctx-id Γ
 
@@ -120,12 +120,12 @@ _ˢ⟨_⟩ʳ : {Δ Γ : Ctx C×D} → (σ : Δ ⇒ Γ) → (d : Ob D) → Δ ⟨
 
 -- `_ˢ⟨_⟩ˡ` and `_⟪_⟫ˡ` commute.
 fix-const-substˡ : {Δ Γ : Ctx C×D} (σ : Δ ⇒ Γ) {f : Hom C c₁ c₂} → 
-                   (Γ ⟪ f ⟫ˡ) ⊚ (σ ˢ⟨ c₂ ⟩ˡ) ≅ˢ (σ ˢ⟨ c₁ ⟩ˡ) ⊚ (Δ ⟪ f ⟫ˡ)
+                   Γ ⟪ f ⟫ˡ ⊚ σ ˢ⟨ c₂ ⟩ˡ ≅ˢ σ ˢ⟨ c₁ ⟩ˡ ⊚ Δ ⟪ f ⟫ˡ
 eq (fix-const-substˡ σ) γ = naturality σ
 
 -- `_ˢ⟨_⟩ʳ` and `_⟪_⟫ʳ` commute.
 fix-const-substʳ : {Δ Γ : Ctx C×D} (σ : Δ ⇒ Γ) {g : Hom D d₁ d₂} → 
-                   (Γ ⟪ g ⟫ʳ) ⊚ (σ ˢ⟨ d₂ ⟩ʳ) ≅ˢ (σ ˢ⟨ d₁ ⟩ʳ) ⊚ (Δ ⟪ g ⟫ʳ)
+                   Γ ⟪ g ⟫ʳ ⊚ σ ˢ⟨ d₂ ⟩ʳ ≅ˢ σ ˢ⟨ d₁ ⟩ʳ ⊚ Δ ⟪ g ⟫ʳ
 eq (fix-const-substʳ σ) γ = naturality σ
 
 -- `_ˢ⟨_⟩ˡ` respects equivalence of substitutions.
@@ -146,19 +146,19 @@ eq fix-subst-idʳ γ = refl
 
 -- `_ˢ⟨_⟩ˡ` commutes with composition of substitutions.
 fix-subst-⊚ˡ : {Δ Γ Θ : Ctx C×D} {c : Ob C} → (τ : Γ ⇒ Θ) (σ : Δ ⇒ Γ) → 
-               (τ ⊚ σ) ˢ⟨ c ⟩ˡ ≅ˢ (τ ˢ⟨ c ⟩ˡ) ⊚ (σ ˢ⟨ c ⟩ˡ)
+               τ ˢ⟨ c ⟩ˡ ⊚ σ ˢ⟨ c ⟩ˡ ≅ˢ (τ ⊚ σ) ˢ⟨ c ⟩ˡ
 eq (fix-subst-⊚ˡ τ σ) γ = refl
 
 -- `_ˢ⟨_⟩ʳ` commutes with composition of substitutions.
 fix-subst-⊚ʳ : {Δ Γ Θ : Ctx C×D} {d : Ob D} → (τ : Γ ⇒ Θ) (σ : Δ ⇒ Γ) → 
-               (τ ⊚ σ) ˢ⟨ d ⟩ʳ ≅ˢ (τ ˢ⟨ d ⟩ʳ) ⊚ (σ ˢ⟨ d ⟩ʳ)
+               τ ˢ⟨ d ⟩ʳ ⊚ σ ˢ⟨ d ⟩ʳ ≅ˢ (τ ⊚ σ) ˢ⟨ d ⟩ʳ
 eq (fix-subst-⊚ʳ τ σ) γ = refl
 
-eγ-decompnˡ : (Γ : Ctx C×D) → {f : Hom C c₁ c₂} {g : Hom D d₁ d₂} →
-              {γ₁ : Γ ⟨ [ c₁ , d₁ ] ⟩} {γ₂ : Γ ⟨ [ c₂ , d₂ ] ⟩} → 
-              (eγ : Γ ⟪ [ f , g ] ⟫ γ₂ ≡ γ₁) → 
-              Γ ⟨ c₁ ⟩ˡ ⟪ g ⟫ (Γ ⟨ d₂ ⟩ʳ ⟪ f ⟫ γ₂) ≡ γ₁
-eγ-decompnˡ {c₁ = c₁} {d₂ = d₂} Γ {f} {g} {γ₁} {γ₂} eγ = 
+decompnˡ : (Γ : Ctx C×D) → {f : Hom C c₁ c₂} {g : Hom D d₁ d₂} →
+           {γ₁ : Γ ⟨ [ c₁ , d₁ ] ⟩} {γ₂ : Γ ⟨ [ c₂ , d₂ ] ⟩} → 
+           (eγ : Γ ⟪ [ f , g ] ⟫ γ₂ ≡ γ₁) → 
+           Γ ⟨ c₁ ⟩ˡ ⟪ g ⟫ (Γ ⟨ d₂ ⟩ʳ ⟪ f ⟫ γ₂) ≡ γ₁
+decompnˡ {c₁ = c₁} {d₂ = d₂} Γ {f} {g} {γ₁} {γ₂} eγ = 
   begin 
     Γ ⟨ c₁ ⟩ˡ ⟪ g ⟫ (Γ ⟨ d₂ ⟩ʳ ⟪ f ⟫ γ₂)
   ≡˘⟨ ctx-comp Γ ⟩
@@ -169,11 +169,11 @@ eγ-decompnˡ {c₁ = c₁} {d₂ = d₂} Γ {f} {g} {γ₁} {γ₂} eγ =
     γ₁ ∎
   where open ≡-Reasoning
 
-eγ-decompnʳ : (Γ : Ctx C×D) → {f : Hom C c₁ c₂} {g : Hom D d₁ d₂} →
-              {γ₁ : Γ ⟨ [ c₁ , d₁ ] ⟩} {γ₂ : Γ ⟨ [ c₂ , d₂ ] ⟩} → 
-              (eγ : Γ ⟪ [ f , g ] ⟫ γ₂ ≡ γ₁) → 
-              Γ ⟨ d₁ ⟩ʳ ⟪ f ⟫ (Γ ⟨ c₂ ⟩ˡ ⟪ g ⟫ γ₂) ≡ γ₁
-eγ-decompnʳ {c₂ = c₂} {d₁ = d₁} Γ {f} {g} {γ₁} {γ₂} eγ =
+decompnʳ : (Γ : Ctx C×D) → {f : Hom C c₁ c₂} {g : Hom D d₁ d₂} →
+           {γ₁ : Γ ⟨ [ c₁ , d₁ ] ⟩} {γ₂ : Γ ⟨ [ c₂ , d₂ ] ⟩} → 
+           (eγ : Γ ⟪ [ f , g ] ⟫ γ₂ ≡ γ₁) → 
+            Γ ⟨ d₁ ⟩ʳ ⟪ f ⟫ (Γ ⟨ c₂ ⟩ˡ ⟪ g ⟫ γ₂) ≡ γ₁
+decompnʳ {c₂ = c₂} {d₁ = d₁} Γ {f} {g} {γ₁} {γ₂} eγ =
   begin
     Γ ⟨ d₁ ⟩ʳ ⟪ f ⟫ (Γ ⟨ c₂ ⟩ˡ ⟪ g ⟫ γ₂)
   ≡˘⟨ ctx-comp Γ ⟩

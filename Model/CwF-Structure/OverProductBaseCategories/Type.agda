@@ -4,15 +4,15 @@
 
 open import Model.BaseCategory
 
-module Model.CwF-Structure.TypeProdBase {C D : BaseCategory} where
+module Model.CwF-Structure.OverProductBaseCategories.Type {C D : BaseCategory} where
 
 open import Relation.Binary.PropositionalEquality hiding ([_]; naturality)
 open import Data.Product renaming (_,_ to [_,_])
 open import Function using (id; _∘_)
 
-open import Model.CwF-Structure.Type
 open import Model.CwF-Structure.Context
-open import Model.CwF-Structure.ContextProdBase
+open import Model.CwF-Structure.Type
+open import Model.CwF-Structure.OverProductBaseCategories.Context
 
 open BaseCategory
 
@@ -25,8 +25,8 @@ private
     d d₁ d₂ d₃ : Ob D
     Γ Δ Θ : Ctx C×D
 
-infix 30 _ᵗʸ⟨_⟩ˡ _ᵗʸ⟨_⟩ʳ
-infix 30 _ₙ⟨_⟩ˡ _ₙ⟨_⟩ʳ
+infixl 30 _ᵗʸ⟨_⟩ˡ _ᵗʸ⟨_⟩ʳ
+infixl 30 _ₙ⟨_⟩ˡ _ₙ⟨_⟩ʳ
 
 
 --------------------------------------------------
@@ -104,9 +104,9 @@ eq (isoʳ fix-ty-subst-naturalʳ) t = refl
 --------------------------------------------------
 -- Turn a morphism in a base category into a morphism between types
 
-mor-to-↣ˡ : {Γ : Ctx C×D} (T : Ty Γ) (f : Hom C c₁ c₂) → T ᵗʸ⟨ c₂ ⟩ˡ ↣ T ᵗʸ⟨ c₁ ⟩ˡ [ Γ ⟪ f ⟫ˡ ]
-func (mor-to-↣ˡ T f) = T ᵗʸ⟨ _ ⟩ʳ ⟪ f , refl ⟫_
-  -- refl : Γ ⟪ [ f , hom-id D {d} ] ⟫ γ ≡ Γ ⟪ [ f , hom-id D ] ⟫ γ
+mor-to-↣ˡ : {Γ : Ctx C×D} → (T : Ty Γ) → (f : Hom C c₁ c₂) → 
+             T ᵗʸ⟨ c₂ ⟩ˡ ↣ T ᵗʸ⟨ c₁ ⟩ˡ [ Γ ⟪ f ⟫ˡ ]
+func (mor-to-↣ˡ T f) {d} = T ᵗʸ⟨ d ⟩ʳ ⟪ f , refl ⟫_
 _↣_.naturality (mor-to-↣ˡ T f) = trans (sym (ty-comp T)) (trans (ty-cong T (×-≡,≡→≡ [ hom-idⁱ C , hom-idᵒ D ])) (ty-comp T))
 
 mor-to-↣ʳ : {Γ : Ctx C×D} (T : Ty Γ) (g : Hom D d₁ d₂) → T ᵗʸ⟨ d₂ ⟩ʳ ↣ T ᵗʸ⟨ d₁ ⟩ʳ [ Γ ⟪ g ⟫ʳ ]
@@ -161,5 +161,3 @@ eq (fix-ty-↣-congˡ η=η') t = eq η=η' t
 fix-ty-↣-congʳ : {Γ : Ctx C×D} {T S : Ty Γ} {η η' : T ↣ S} {d : Ob D} → η ≅ⁿ η' →
                   η ₙ⟨ d ⟩ʳ ≅ⁿ η' ₙ⟨ d ⟩ʳ
 eq (fix-ty-↣-congʳ η=η') t = eq η=η' t
-
-

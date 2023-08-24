@@ -133,15 +133,6 @@ record _↣_ {Γ : Ctx C} (T : Ty Γ) (S : Ty Γ) : Set where
   no-eta-equality
   field
     func : ∀ {x} {γ} → T ⟨ x , γ ⟩ → S ⟨ x , γ ⟩
-    {-
-                        T ⟪ f , eγ ⟫_
-      T ⟨ x , γx ⟩ ←--------------------- T ⟨ y , γy ⟩ ∋ t
-            |                                    |
-            | func (T ↣ S)          func (T ↣ S) |
-            ↓                                    ↓
-      S ⟨ x , γx ⟩ ←--------------------- S ⟨ y , γy ⟩
-                        S ⟪ f , eγ ⟫_                         
-    -}
     naturality : ∀ {x y} {f : Hom x y} {γy : Γ ⟨ y ⟩} {γx : Γ ⟨ x ⟩} {eγ : Γ ⟪ f ⟫ γy ≡ γx} {t : T ⟨ y , γy ⟩} →
                  S ⟪ f , eγ ⟫ (func t) ≡ func (T ⟪ f , eγ ⟫ t)
 open _↣_ public
